@@ -1,147 +1,154 @@
 import pygame
-from pygame.locals import *
-from sys import exit 
+from pygame import *
+from sys import exit
 from random import randint
 pygame.init()
 
-largura = 640
-altura = 480
+#screen
+height = 640
+width = 480
 
+#Variaveis uteis
 velocidade = 10
-
-x_snake = largura/2 - 20
-y_snake = altura/2 - 30
-x_const_snake = 5
-y_const_snake = 0
-lista_Corpo_Snake = []
-
-
-morreu = False
-x_apple = randint(40, 600)
-y_apple = randint(50, 400)
-
-crescimento_snake = 10
 pontos = 0
-tela = pygame.display.set_mode((largura, altura))
-pygame.display.set_caption('minigame')
-#Variáveis
-def cresce_snake(lista_Corpo_Snake):
-       for XeY in lista_Corpo_Snake:
-        pygame.draw.rect(tela, (0,255,0), (XeY[0],XeY[1],20,20))
+
+#snake
+x_length_snake = 20
+y_length_snake = 20
+x_position_snake = height/2 - x_length_snake/2
+y_position_snake = width/2 - y_length_snake/2
+x_control_snake = 5
+y_control_snake = 0
+body_snake_list = []
+length_body_snake = 20
+death_snake = False
+#apple
+x_length_apple = 20
+y_length_apple = 20
+x_position_apple = randint(40,600)
+y_position_apple = randint(50, 400)
+
+screen = pygame.display.set_mode((height, width))
+pygame.display.set_caption('Snake')
+
+#Funções
+def mov_snake(body_snake_list):
+    for XeY in body_snake_list:
+        pygame.draw.rect(screen, (0,255,0), (XeY[0],XeY[1],20,20))
 
 def reiniciar_jogo():
-    global largura, altura, velocidade, x_snake, y_snake, crescimento_snake, pontos, lista_Corpo_Snake, lista_Cabeca_Snake, x_apple, y_apple, morreu
-
-    largura = 640
-    altura = 480
+    global x_length_snake,death_snake,body_snake_list,head_snake_list, y_length_snake, x_position_snake, y_position_snake, length_body_snake, velocidade, pontos, x_position_apple, y_position_apple
+    x_length_snake = 20
+    y_length_snake = 20
+    x_position_snake = height/2 - x_length_snake/2
+    y_position_snake = width/2 - y_length_snake/2
+    length_body_snake = 20
     velocidade = 10
-    x_snake = largura/2 - 20
-    y_snake = altura/2 - 30
-    crescimento_snake = 5
     pontos = 0
-    lista_Corpo_Snake = []
-    lista_Cabeca_Snake = []
-    x_apple = randint(40, 600)
-    y_apple = randint(50, 400)
-    morreu = False
-while True:
-    pygame.time.Clock().tick(30)
-    tela.fill((0,0,0))
-    fonte = pygame.font.SysFont('arial',40 ,True,True)
-    mensagem = f'Pontos: {pontos}'
-    msg_formatada = fonte.render(mensagem, True, (255,255,255))
+    body_snake_list = []
+    head_snake_list = []
+    x_position_apple = randint(40,600)
+    y_position_apple = randint(50, 400)
+    death_snake = False
 
+while True:
+        
+    pygame.time.Clock().tick(30)
+    screen.fill((0,0,0))
+    mensagem = f'Pontos: {pontos}'
+    fonte = pygame.font.SysFont('arial', 40, True, True)
+    msg_formatada = fonte.render(mensagem, True,(255,255,255))
     for event in pygame.event.get():
+        
         if event.type == QUIT:
             pygame.quit()
             exit()
         if event.type == KEYDOWN:
             if event.key == K_a:
-                if x_const_snake == velocidade:
+                if x_control_snake == velocidade:
                     pass
                 else:
-                    x_const_snake = -velocidade
-                    y_const_snake = 0
+                    x_control_snake = -velocidade
+                    y_control_snake = 0
             if event.key == K_d:
-                if x_const_snake == -velocidade:
+                if x_control_snake == -velocidade:
                     pass
                 else:
-                    x_const_snake = velocidade
-                    y_const_snake = 0
+                    x_control_snake = velocidade
+                    y_control_snake = 0
             if event.key == K_w:
-                if y_const_snake == velocidade:
+                if y_control_snake == velocidade:
                     pass
                 else:
-                    y_const_snake = -velocidade
-                    x_const_snake = 0
+                    y_control_snake = -velocidade
+                    x_control_snake = 0
             if event.key == K_s:
-                if y_const_snake == -velocidade:
+                if y_control_snake == -velocidade:
                     pass
-                else: 
-                    y_const_snake = velocidade
-                    x_const_snake = 0
+                else:
+                    y_control_snake = velocidade
+                    x_control_snake = 0
 
-    x_snake = x_snake + x_const_snake
-    y_snake = y_snake + y_const_snake
+    x_position_snake = x_position_snake + x_control_snake
+    y_position_snake = y_position_snake + y_control_snake
 
-    if x_snake == largura:
-        x_snake = 0
-    elif x_snake == 0:
-
-    
-        x_snake = largura
-
-    if y_snake == altura:
-        y_snake = 0
-    elif y_snake == 0:
-        y_snake = altura
-
-
-    snake = pygame.draw.rect(tela, (0,255,0), (x_snake, y_snake, 20, 20))
-    apple = pygame.draw.rect(tela, (255,0,0), (x_apple,y_apple,20,20))
+    snake = pygame.draw.rect(screen, (0,255,0), (x_position_snake,y_position_snake,x_length_snake,y_length_snake) )
+    apple = pygame.draw.rect(screen, (255,0,0), (x_position_apple,y_position_apple,x_length_apple,y_length_apple))
 
     if snake.colliderect(apple):
-        x_apple = randint(40, 600)
-        y_apple = randint(50, 400)
-        pontos = pontos +1
-        crescimento_snake = crescimento_snake +1
+        x_position_apple = randint(40, 600)
+        y_position_apple = randint(50, 400)
+        pontos = pontos + 1
+        length_body_snake = length_body_snake + 1
+        velocidade = velocidade + float(0.03)
 
-    lista_Cabeca_Snake = []
-    lista_Cabeca_Snake.append(x_snake)
-    lista_Cabeca_Snake.append(y_snake)
-    lista_Corpo_Snake.append(lista_Cabeca_Snake)
+    head_snake_list = []
+    head_snake_list.append(x_position_snake)
+    head_snake_list.append(y_position_snake)
+    body_snake_list.append(head_snake_list)
+
+    if len(body_snake_list) > length_body_snake:
+        del body_snake_list[0]
+
     
-    cresce_snake(lista_Corpo_Snake)
+            
+    if body_snake_list.count(head_snake_list) > 1:
+        msg_snake = f'Digite R para reiniciar o jogo.'
+        fonte_snake = pygame.font.SysFont('arial',20,True,True)
+        msg_formatada_snake = fonte_snake.render(msg_snake, True, (255,255,255)) 
+        ret_text = msg_formatada_snake.get_rect()
+        msg_pontos_snake = f' Total de pontos {pontos}'
+        fonte_pontos_snake = pygame.font.SysFont('arial', 20, True, True)
+        msg_ponto_formatada_snake = fonte_pontos_snake.render(msg_pontos_snake, True, (255,255,255))
+        ret_pontos_text = msg_ponto_formatada_snake.get_rect()
+        death_snake = True
 
-    if len(lista_Corpo_Snake) > crescimento_snake:
-        del lista_Corpo_Snake[0]
-
-    if lista_Corpo_Snake.count(lista_Cabeca_Snake) > 1:
-
-        morreu = True
-        while morreu:
-            tela.fill((0,0,0))
-            fonte2 = pygame.font.SysFont('arial', 20 ,True, True)
-            mensagem_rein = f'Aperte a tecla P para reiniciar'
-            mensagem_pontos_rein = f'Total de pontos: {pontos}'
-            mensagem_formatada_pontos_rein = fonte2.render(mensagem_pontos_rein, True, (255,255,255))
-            mensagem_formatada_rein = fonte2.render(mensagem_rein, True, (255,255,255))
-            cent_msg = mensagem_formatada_rein.get_rect()
-            cent_ponto_msg = mensagem_formatada_pontos_rein.get_rect()
+        while death_snake:
+            screen.fill((0,0,0))
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     exit()
                 if event.type == KEYDOWN:
-                    if event.key == K_p:
-                        print('oo')
+                    if event.key == K_r:
                         reiniciar_jogo()
-            cent_ponto_msg.center = (largura/2, altura/2 + 60)
-            cent_msg.center = (largura/2, altura/2)
-            tela.blit(mensagem_formatada_pontos_rein, (cent_ponto_msg))
-            tela.blit(mensagem_formatada_rein, (cent_msg))            
+            ret_pontos_text.center = (height/2,width/2 + 60)
+            ret_text.center = (height/2, width/2)
+            screen.blit(msg_formatada_snake, ret_text)
+            screen.blit(msg_ponto_formatada_snake, ret_pontos_text)
             pygame.display.update()
 
+    if x_position_snake > height:
+        x_position_snake = 0
+    if x_position_snake < 0:
+        x_position_snake = 640
+    if y_position_snake > width:
+        y_position_snake = 0
+    if y_position_snake < 0:
+        y_position_snake = 480
+    
 
-    tela.blit(msg_formatada, (420, 40))
+    mov_snake(body_snake_list)
+    screen.blit(msg_formatada, (450,40))
+
     pygame.display.update()
